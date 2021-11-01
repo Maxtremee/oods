@@ -3,11 +3,11 @@ class Class:
         self.paths = []
         self.name = name
 
-    def add_item(self, path):
+    def add_item(self, path: list):
         found = None
         for pth in self.paths:
             if pth is path:
                 found = pth
         if not found:
-            self.items.append(path)
+            self.paths.append(path)
 

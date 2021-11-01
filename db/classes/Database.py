@@ -1,6 +1,7 @@
 import os
 import pickle
 import shutil
+import time
 
 from db.classes.Root import Root
 from db.misc.eprint import eprint
@@ -19,44 +20,40 @@ def _check_if_db_exists(name):
 class Database:
     def create(name):
         if not _check_if_db_exists(name):
-            curdir = os.curdir
             try:
                 os.mkdir(name)
-                os.chdir(name)
                 try:
-                    with open('root.pickle', 'wb') as file:
+                    with open(f'{name}/root.pickle', 'wb') as file:
                         pickle.dump(
                             Root(), file, protocol=pickle.HIGHEST_PROTOCOL)
                 except pickle.PickleError as e:
                     eprint(e, e)
             except OSError as e:
                 eprint(e, "Cannot create directory, check your permissions!")
-            finally:
-                os.chdir(curdir)
         else:
-            print("Database already exists!")
+            print("Database already exists! Skipping")
 
     def load(name) -> Root:
+        while not _check_if_db_exists(name):
+            time.sleep(0.0001)
+
         if _check_if_db_exists(name):
-            curdir = os.curdir
             try:
-                os.chdir(name)
-                try:
-                    with open('root.pickle', 'rb') as file:
-                        return pickle.load(file)
-                except OSError as e:
-                    eprint(e, "Error opening database file!")
-                except pickle.PickleError as e:
-                    eprint(e, "Error loading database!")
-                except Exception as e:
-                    eprint(e, e)
+                with open(f'{name}/root.pickle', 'rb') as file:
+                    return pickle.load(file)
+            except OSError as e:
+                eprint(e, "Error opening database file!")
+            except pickle.PickleError as e:
+                eprint(e, "Error loading database!")
+            except Exception as e:
+                eprint(e, e)
             except OSError as e:
                 eprint(e, "Cannot change directory! Did you create such database?")
-            finally:
-                os.chdir(curdir)
         else:
-            print("No such database!")
+            raise ValueError("No such database!")
 
     def delete(name):
         if _check_if_db_exists(name):
             shutil.rmtree(name)
+        else:
+            raise ValueError("No such database!")
