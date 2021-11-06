@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 # oods
-*db
+testdb/
+*.db
