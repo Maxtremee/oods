@@ -18,17 +18,21 @@ try:
     home = Home('house', room)
     db.add_to_root(home)
     print(db.get_by_id(room.id).name)
-    # print(db.get_by_id(furniture.id).name)
-    room.name = 'bathroom'
-    # furniture.name = 'cooker'
+    print(home.name)
+    home = db.get_by_id(home.id)
+    print(home.name)
+    room.name = 'test'
+    furn = Furniture('test')
+    room.title = furn
     db.save(room)
-    print(db.get_by_id(room.id).name)
-    # print(db.get_by_id(furniture.id).name)
-    # print(db.index.classes)#.get('Furniture').paths)
-    paths = db.index.classes.get('Furniture').paths
-    # pp(paths)
-    for item in paths:
-        print(db.get_by_id(item).name)
+    print(db.get_by_id(home.id).room.name)
+    print(db.get_by_id(home.id).room.title)
+    print(db.get_by_id(furn.id).name)
+    # print(db.index.classes.get('Furniture').paths)
+    # paths = db.index.classes.get('Room').paths
+    # for item in paths:
+    #     obj = db.get_by_id(item)
+    #     obj.item = 
     Database.save("testdb", db)
 
 except Exception as e:

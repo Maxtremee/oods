@@ -1,6 +1,7 @@
 # oods
 
 ## How to
+Maximum python version is 3.8.12.
 Attributes starting with '_' (local private attributes) will NOT be processed. They will not be available to query.
 
 ## Notes

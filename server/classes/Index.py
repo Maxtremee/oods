@@ -1,4 +1,3 @@
-import logging
 from uuid import UUID
 
 from server.classes.Persistent import Persistent
@@ -8,6 +7,13 @@ from server.classes.Class import Class
 class Index:
     def __init__(self):
         self.classes = {}
+
+    def _remove_from_class(self, id: UUID, cls_name: str):
+        cls = self.classes.get(cls_name)
+        if cls:
+            cls.remove(id)
+        else:
+            raise Exception("No such class")
 
     def _add_to_class(self, obj: Persistent, path: list):
         """Adds object of certain class to corresponding Class object.
