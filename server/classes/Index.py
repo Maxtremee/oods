@@ -10,6 +10,10 @@ class Index:
         self.classes = {}
 
     def _add_to_class(self, obj: Persistent, path: list):
+        """Adds object of certain class to corresponding Class object.
+        
+        Also requires a path object which is a list of next occuring attributes names or list/dict/tuple indexes
+        """
         cls_name = type(obj).__name__
         id = obj.id
         cls = self.classes.get(cls_name)
@@ -30,9 +34,23 @@ class Index:
             if not attr.startswith("_"):
                 attr_obj = getattr(obj, attr)
                 if isinstance(attr_obj, Persistent):
-                    path_cpy = path
+                    path_cpy = path.copy()
                     path_cpy.append(attr)
                     self.process(attr_obj, path_cpy)
+                elif isinstance(attr_obj, dict):
+                    for item in attr_obj:
+                        attr_obj_item = attr_obj[item]
+                        if isinstance(attr_obj_item, Persistent):
+                            path_cpy = path.copy()
+                            path_cpy.append({'attr_name': attr, 'index': item})
+                            self.process(attr_obj_item, path_cpy)
+                elif isinstance(attr_obj, (list, tuple)):
+                    for item in range(len(attr_obj)):
+                        attr_obj_item = attr_obj[item]
+                        if isinstance(attr_obj_item, Persistent):
+                            path_cpy = path.copy()
+                            path_cpy.append({'attr_name': attr, 'index': item})
+                            self.process(attr_obj_item, path_cpy)
 
     def get_path_by_id(self, id: UUID):
         """Return path to object by ID"""
