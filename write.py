@@ -21,11 +21,19 @@ try:
     room = Room('kitchen', 'cooker', 'drawers', 'knife')
     # room.id = UUID('{12345678-1234-5678-1234-567812345678}')
     home = Home('house', room)
+    print(home.name)
     db.add_to_root(home)
     db.save(home)
-    print(db.index.classes.get("Furniture").items)
+    home.name = "test"
     db.save(home)
-    print(db.index.classes.get("Furniture").items)
+    home = db.get(home.id, "Home")
+    print(home.name)
+    print(db.index.classes.get("Home").get(home.id).uses)
+
+    db.delete(home.id, "Home")
+    home = db.get(home.id, "Home")
+    print(home.name)
+    print(db.index.classes.get("Home").get(home.id).uses)
 
     Database.save("test", db)
 

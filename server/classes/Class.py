@@ -6,17 +6,17 @@ class Class:
     def __init__(self):
         self.items = {}
 
-    def add(self, id: UUID, obj: Persistent):
+    def add(self, obj: Persistent):
         """Add or update item of particular class"""
-        item = self.items.get(id)
+        item = self.items.get(obj.id)
         if item:
             item.increment()
             item.set(obj)
         else:
             item = Item(obj)
-        self.items.update({id: item})
+        self.items.update({obj.id: item})
 
-    def get(self, id: UUID):
+    def get(self, id: UUID) -> Item:
         """Get item with object's ID"""
         return self.items.get(id)
 
