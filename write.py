@@ -22,24 +22,54 @@ try:
         'living room', 'couch', 'tv', 'painting'), Room('bathroom', 'sink', 'bath', 'shower')]
     # room.id = UUID('{12345678-1234-5678-1234-567812345678}')
     home = Home('house', rooms)
-    print(home.name)
+    # print(home.name)
     db.add_to_root(home)
-    db.save(home)
-    home.name = "test"
-    db.save(home)
+    # db.save(home)
+    # home.name = "test"
+    # ref = db.save(home)
+    # print(ref.id)
+    # print(ref.cls_name)
     home = db.get(home.id, "Home")
-    print(home.name)
-    print(db.index.classes.get("Home").get(home.id).uses)
-    for room in home.rooms:
-        print(room.name)
-        for furniture in room.furniture:
-            print(f"\t{furniture.name}")
+    # print(db.index.classes.get("Home").get(home.id).uses)
 
-    furniture = db.query.get_all_where("Furniture", "name", "lt", "tv")
+    # print(home.rooms[0].furniture)
+    # home_item = db.index.classes.get("Home").get(home.id).obj
+    # print(home_item.rooms)
+    # for item in dir(home_item):
+    #     if not item.startswith("_"):
+    #         # print(item)
+    #         print(getattr(home_item, item))
+
+    # furniture = db.index.classes.get("Room").items
+    # for item in furniture:
+    #     print(furniture[item].obj.furniture[0])
+
+    # print(home.name)
+    # print(db.index.classes.get("Home").get(home.id).uses)
+    # for room in home.rooms:
+    #     print(room.name)
+    #     for furniture in room.furniture:
+    #         print(f"\t{furniture.name}")
+
+    # rooms2 = db.query.get_all("Room")
+    # for room in rooms2:
+    #     print(room.name)
+    #     print(room.furniture)
+    # print(db.index.classes.get("Home").get(home.id).uses)
+    furniture = db.query.get_all_where("Furniture", "name", "ne", "tv")
     if furniture:
         for fur in furniture:
-            print(fur.name)
-    db.delete(home.id, "Home")
+            print(f"{fur.name} {fur.id}")
+    # print(furniture[0].id)
+    # db.delete(home.id, "Home")
+    # print(db.index.classes.get("Home").get(home.id).uses)
+    db.delete(furniture[0].id)
+    print("\n")
+    furniture = db.query.get_all_where("Furniture", "name", "ne", "tv")
+    if furniture:
+        for fur in furniture:
+            print(f"{fur.name} {fur.id}")
+
     # print(db.index.classes.get("Home").get(home.id).uses)
     # home = db.get(home.id, "Home")
     # print(home.name)

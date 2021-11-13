@@ -1,21 +1,25 @@
 from uuid import UUID
 from server.Item import Item
-from server.Persistent import Persistent
+
 
 class Class:
     def __init__(self):
         self.items = {}
 
-    def add(self, obj: Persistent):
-        """Add or update item of particular class"""
-        item = self.items.get(obj.id)
-        if item and item.get_last_changed() < obj.last_changed:
-            item.increment()
-            item.set(obj)
-            self.items.update({obj.id: item})
+    def add(self, new: Item):
+        """Add or update Item of particular class"""
+        id = new.get_id()
+        old = self.items.get(id)
+        if old:
+            if old.get_last_changed() <= new.get_last_changed():
+                old.set(new.obj)
+                old.increment()
+                self.items.update({id: old})
+            else:
+                #TODO: raise error
+                pass
         else:
-            item = Item(obj)
-            self.items.update({obj.id: item})
+            self.items.update({id: new})
 
     def get(self, id: UUID) -> Item:
         """Get item with object's ID"""
@@ -24,7 +28,7 @@ class Class:
     def remove(self, id: UUID):
         """Remove item with object's ID
         
-        Depending on uses count either decrements the item or removes it altogether"""
+        Depending on uses count, either decrements the item or removes it altogether"""
         item = self.items.get(id)
         if item:
             item.decrement()

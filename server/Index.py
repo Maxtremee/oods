@@ -8,23 +8,31 @@ class Index:
     def __init__(self):
         self.classes = {}
 
-    def add(self, obj: Persistent) -> Reference:
+    def add(self, item: Item) -> Reference:
         """Add or update object in class"""
-        cls_name = type(obj).__name__
+        cls_name = item.cls_name
         cls = self.classes.get(cls_name)
         if cls:
-            cls.add(obj)
+            cls.add(item)
         else:
             cls = Class()
-            cls.add(obj)
+            cls.add(item)
         self.classes.update({cls_name: cls})
-        return Reference(obj.id, cls_name)
+        ref = Reference(item.get_id(), cls_name)
+        return ref
 
     def get(self, ref: Reference) -> Item:
         """Get Item of class"""
-        cls = self.classes.get(ref.cls_name)
-        if cls:
-            return cls.get(ref.id)
+        if ref.cls_name:
+            cls = self.classes.get(ref.cls_name)
+            if cls:
+                return cls.get(ref.id)
+        else:
+            for cls_name in self.classes:
+                cls = self.classes.get(cls_name)
+                item = cls.get(ref.id)
+                if item:
+                    return item
 
     def remove(self, ref: Reference) -> None:
         """Remove Item"""
@@ -32,7 +40,7 @@ class Index:
             self.classes.get(ref.cls_name).remove(ref.id)
         else:
             for cls in self.classes:
-                cls.remove(ref.id)
+                self.classes.get(cls).remove(ref.id)
 
     def get_all_by_cls(self, cls_name: str):
         """Returns all Items of a class"""

@@ -16,5 +16,8 @@ class Item:
     def set(self, obj: Persistent):
         self.obj = obj
 
+    def get_id(self):
+        return self.obj.id
+
     def get_last_changed(self):
         return self.obj.last_changed

@@ -7,3 +7,4 @@ class Home(Persistent):
         super().__init__()
         self.name = name
         self.rooms = rooms
+        self.main = Room("garage", "lift", "car")

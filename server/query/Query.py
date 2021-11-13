@@ -26,31 +26,33 @@ class Query:
                 res.append(obj)
             return res
 
-    def _action(self, obj, attribute: str, operator: Operators, value):
-        """Helper function that decides whether given object has an attribute whose value is """
+    def _action(self, obj, attr: str, operator: Operators, value) -> bool:
+        """Helper function that decides whether given object has an attribute 
+        whose value is in relation of given operator to given value"""
         try:
             if operator == Operators.EQ:
-                return getattr(obj, attribute) == value
+                return getattr(obj, attr) == value
             elif operator == Operators.NE:
-                return getattr(obj, attribute) != value
+                return getattr(obj, attr) != value
             elif operator == Operators.GT:
-                return getattr(obj, attribute) > value
+                return getattr(obj, attr) > value
             elif operator == Operators.LT:
-                return getattr(obj, attribute) < value
+                return getattr(obj, attr) < value
             elif operator == Operators.GE:
-                return getattr(obj, attribute) >= value
+                return getattr(obj, attr) >= value
             elif operator == Operators.LE:
-                return getattr(obj, attribute) <= value
+                return getattr(obj, attr) <= value
             else:
                 return False
         except AttributeError:
             return False
 
+    def _filter(self, items: list, attr: str, operator: str, value: any):
+        return [x for x in items if self._action(x, attr, operator, value)]
+
     def get_all_where(self, cls_name: str, attr: str, operator: str, value: any):
-        res = []
+        """Returns list of all objects of given class name that have an attribute 
+        whose value is in relation of given operator to given value"""
         items = self.get_all(cls_name)
         if items:
-            for item in items:
-                if self._action(item, attr, operator, value):
-                    res.append(item)
-            return res
+            return self._filter(items, attr, operator, value)
