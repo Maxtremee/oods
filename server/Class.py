@@ -1,6 +1,6 @@
 from uuid import UUID
-from server.classes.Item import Item
-from server.classes.Persistent import Persistent
+from server.Item import Item
+from server.Persistent import Persistent
 
 class Class:
     def __init__(self):
@@ -9,12 +9,13 @@ class Class:
     def add(self, obj: Persistent):
         """Add or update item of particular class"""
         item = self.items.get(obj.id)
-        if item:
+        if item and item.get_last_changed() < obj.last_changed:
             item.increment()
             item.set(obj)
+            self.items.update({obj.id: item})
         else:
             item = Item(obj)
-        self.items.update({obj.id: item})
+            self.items.update({obj.id: item})
 
     def get(self, id: UUID) -> Item:
         """Get item with object's ID"""
@@ -26,8 +27,8 @@ class Class:
         Depending on uses count either decrements the item or removes it altogether"""
         item = self.items.get(id)
         if item:
+            item.decrement()
             if item.uses < 1:
                 self.items.pop(id)
             else:
-                item.decrement()
                 self.items.update({id: item})

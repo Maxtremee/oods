@@ -1,4 +1,5 @@
-from server.classes.Persistent import Persistent
+from server.Persistent import Persistent
+
 
 class Item:
     def __init__(self, obj: Persistent, uses: int = 1):
@@ -14,3 +15,6 @@ class Item:
 
     def set(self, obj: Persistent):
         self.obj = obj
+
+    def get_last_changed(self):
+        return self.obj.last_changed

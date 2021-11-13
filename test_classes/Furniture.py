@@ -1,4 +1,4 @@
-from server.classes.Persistent import Persistent
+from server.Persistent import Persistent
 
 class Furniture(Persistent):
     def __init__(self, name):

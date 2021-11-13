@@ -1,6 +1,7 @@
-from server.classes.Index import Index
-from server.classes.Persistent import Persistent
-from server.classes.Reference import Reference
+from server.Index import Index
+from server.Persistent import Persistent
+from server.query.Query import Query
+from server.Reference import Reference
 from uuid import UUID
 
 
@@ -8,6 +9,7 @@ class Root:
     def __init__(self):
         self.items = {}
         self.index: Index = Index()
+        self.query: Query = Query(self)
 
     def add_to_root(self, obj: Persistent):
         if self.items.get(obj.id):
@@ -83,6 +85,7 @@ class Root:
                         if isinstance(attr_obj_item, Reference):
                             indx = self.index.get(attr_obj_item)
                             indx = self.get(indx.obj.id, indx.cls_name)
+                            # convert tuple to list and back
                             attr_obj = list(attr_obj)
                             attr_obj[item] = indx
                             attr_obj = tuple(attr_obj)
@@ -108,10 +111,7 @@ class Root:
                             self._delete(attr_obj_item)
         self.index.remove(ref)
 
-
     def delete(self, id: UUID, cls_name: str = None):
         """Deletes specified object and any Persistent object it might contain"""
         ref = Reference(id, cls_name)
         self._delete(ref)
-        
-        

@@ -1,7 +1,7 @@
-from server.classes.Persistent import Persistent
-from server.classes.Class import Class
-from server.classes.Reference import Reference
-from server.classes.Item import Item
+from server.Persistent import Persistent
+from server.Class import Class
+from server.Reference import Reference
+from server.Item import Item
 
 
 class Index:
@@ -33,3 +33,7 @@ class Index:
         else:
             for cls in self.classes:
                 cls.remove(ref.id)
+
+    def get_all_by_cls(self, cls_name: str):
+        """Returns all Items of a class"""
+        return self.classes.get(cls_name).items

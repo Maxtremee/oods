@@ -1,9 +1,9 @@
 from test_classes.Room import Room
-from server.classes.Persistent import Persistent
+from server.Persistent import Persistent
 
 
 class Home(Persistent):
-    def __init__(self, name, room: Room):
+    def __init__(self, name, rooms: list):
         super().__init__()
         self.name = name
-        self.room = room
+        self.rooms = rooms

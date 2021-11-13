@@ -1,4 +1,4 @@
-from server.classes.Persistent import Persistent
+from server.Persistent import Persistent
 from test_classes.Furniture import Furniture
 
 

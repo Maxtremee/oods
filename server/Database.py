@@ -1,8 +1,7 @@
-from server.classes.Index import Index
-from server.classes.Root import Root
 import os
 import pickle
 import logging
+from server.Root import Root
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s: %(levelname)s: %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
 
