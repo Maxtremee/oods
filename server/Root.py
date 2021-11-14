@@ -66,40 +66,50 @@ class Root:
                 attr_obj = getattr(obj, attr)
                 if isinstance(attr_obj, Reference):
                     index_item = self.index.get(attr_obj)
-                    index_item = self.get(
-                        index_item.obj.id, index_item.cls_name)
-                    setattr(obj, attr, index_item)
+                    if index_item:
+                        result_obj = self.get(
+                            index_item.obj.id, index_item.cls_name)
+                        setattr(obj, attr, result_obj)
                 elif isinstance(attr_obj, dict):
                     attr_obj_copy = attr_obj.copy()
-                    for item in attr_obj_copy:
-                        attr_obj_item = attr_obj_copy[item]
+                    for item in attr_obj:
+                        attr_obj_item = attr_obj[item]
                         if isinstance(attr_obj_item, Reference):
                             index_item = self.index.get(attr_obj_item)
-                            index_item = self.get(
-                                index_item.obj.id, index_item.cls_name)
-                            attr_obj_copy[item] = index_item
+                            if index_item:
+                                result_obj = self.get(
+                                    index_item.obj.id, index_item.cls_name)
+                                attr_obj_copy[item] = result_obj
+                            else:
+                                attr_obj_cpy.pop(item)
                     setattr(obj, attr, attr_obj_copy)
                 elif isinstance(attr_obj, list):
                     attr_obj_copy = attr_obj.copy()
-                    for item in range(len(attr_obj_copy)):
-                        attr_obj_item = attr_obj_copy[item]
+                    for item in range(len(attr_obj)):
+                        attr_obj_item = attr_obj[item]
                         if isinstance(attr_obj_item, Reference):
                             index_item = self.index.get(attr_obj_item)
-                            index_item = self.get(
-                                index_item.obj.id, index_item.cls_name)
-                            attr_obj_copy[item] = index_item
+                            if index_item:
+                                result_obj = self.get(
+                                    index_item.obj.id, index_item.cls_name)
+                                attr_obj_copy[item] = result_obj
+                            else:
+                                attr_obj_cpy.remove(attr_obj_item)
                     setattr(obj, attr, attr_obj_copy)
                 elif isinstance(attr_obj, tuple):
                     # convert tuple to list and back
                     attr_obj_cpy = list(attr_obj)
                     for item in range(len(attr_obj)):
-                        attr_obj_item = attr_obj_cpy[item]
+                        attr_obj_item = attr_obj[item]
                         if isinstance(attr_obj_item, Reference):
                             index_item = self.index.get(attr_obj_item)
-                            index_item = self.get(
-                                index_item.obj.id, index_item.cls_name)
-                            attr_obj_cpy[item] = index_item
-                    attr_obj = tuple(attr_obj)
+                            if index_item:
+                                result_obj = self.get(
+                                    index_item.obj.id, index_item.cls_name)
+                                attr_obj_cpy[item] = result_obj
+                            else:
+                                attr_obj_cpy.remove(attr_obj_item)
+                    attr_obj = tuple(attr_obj_cpy)
                     setattr(obj, attr, attr_obj)
         return obj
 

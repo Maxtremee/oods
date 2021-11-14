@@ -8,7 +8,7 @@ from test_classes.Furniture import Furniture
 from test_classes.Home import Home
 from test_classes.Room import Room
 
-pp = pprint.PrettyPrinter(indent=5,)
+pp = pprint.PrettyPrinter(indent=5)
 pp = pp.pprint
 
 try:
@@ -30,6 +30,7 @@ try:
     # print(ref.id)
     # print(ref.cls_name)
     home = db.get(home.id, "Home")
+    print(home.rooms[0].furniture)
     # print(db.index.classes.get("Home").get(home.id).uses)
 
     # print(home.rooms[0].furniture)
@@ -56,19 +57,21 @@ try:
     #     print(room.name)
     #     print(room.furniture)
     # print(db.index.classes.get("Home").get(home.id).uses)
-    furniture = db.query.get_all_where("Furniture", "name", "ne", "tv")
-    if furniture:
-        for fur in furniture:
-            print(f"{fur.name} {fur.id}")
+    # furniture = db.query.get_all_where("Furniture", "name", "ne", "tv")
+    # if furniture:
+    #     for fur in furniture:
+    #         print(f"{fur.name} {fur.id}")
     # print(furniture[0].id)
     # db.delete(home.id, "Home")
     # print(db.index.classes.get("Home").get(home.id).uses)
-    db.delete(furniture[0].id)
-    print("\n")
-    furniture = db.query.get_all_where("Furniture", "name", "ne", "tv")
-    if furniture:
-        for fur in furniture:
-            print(f"{fur.name} {fur.id}")
+    db.delete(home.main.furniture[0].id, "Furniture")
+    home2 = db.get(home.id, "Home")
+    print(home2.main.furniture)
+    # print("\n")
+    # furniture = db.query.get_all_where("Furniture", "name", "ne", "tv")
+    # if furniture:
+    #     for fur in furniture:
+    #         print(f"{fur.name} {fur.id}")
 
     # print(db.index.classes.get("Home").get(home.id).uses)
     # home = db.get(home.id, "Home")
