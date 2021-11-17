@@ -9,5 +9,5 @@
     porównanie last_changed przy aktualizacji
     odpowiednie in/dekrementowanie uses
 # TODO: 
-    stworzenie języka zapytań
-    obłusgiwanie warstwy sieciowej (gniazdka itd)
+    stworzenie języka zapytań -> atrybuty, wartości (done) liczba elementów (TODO)
+    obsługiwanie warstwy sieciowej (gniazdka itd)

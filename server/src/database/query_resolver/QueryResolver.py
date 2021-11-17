@@ -1,18 +1,17 @@
 from uuid import UUID
+from .Operators import Operators
 
-from server.query.Operators import Operators
 
-
-class Query:
+class QueryResolver:
     def __init__(self, root):
         self.root = root
 
     def get_by_id(self, id: UUID):
-        """Return object by it's ID"""
+        """Return object by its ID"""
         return self.root.get(id)
 
     def get_by_id_and_cls(self, id: UUID, cls_name: str):
-        """Return object by it's ID and class name"""
+        """Return object by its ID and class name"""
         return self.root.get(id, cls_name)
 
     def get_all(self, cls_name: str) -> list:
@@ -47,12 +46,18 @@ class Query:
         except AttributeError:
             return False
 
-    def _filter(self, items: list, attr: str, operator: str, value: any):
+    def _filter_items(self, items: list, attr: str, operator: str, value: any):
         return [x for x in items if self._action(x, attr, operator, value)]
-
-    def get_all_where(self, cls_name: str, attr: str, operator: str, value: any):
+    
+    def get_all_where(self, cls_name: str, filters: list, limit: int = None):
         """Returns list of all objects of given class name that have an attribute 
         whose value is in relation of given operator to given value"""
         items = self.get_all(cls_name)
-        if items:
-            return self._filter(items, attr, operator, value)
+        for filter in filters:
+            if items:
+                items = self._filter_items(items, filter.attr, filter.operator, filter.value)
+            else:
+                return []
+        if limit:
+            return items[0:limit]
+        return items

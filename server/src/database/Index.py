@@ -1,7 +1,6 @@
-from server.Persistent import Persistent
-from server.Class import Class
-from server.Reference import Reference
-from server.Item import Item
+from .Class import Class
+from .Reference import Reference
+from .Item import Item
 
 
 class Index:

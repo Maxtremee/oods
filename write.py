@@ -1,12 +1,11 @@
 import logging
 import pprint
 import os
-from uuid import UUID
 
-from server.Database import Database
-from test_classes.Furniture import Furniture
-from test_classes.Home import Home
-from test_classes.Room import Room
+from client.src.Filter import Filter
+from server.tests.Furniture import Furniture
+from server.tests.Home import Home
+from server.tests.Room import Room
 
 pp = pprint.PrettyPrinter(indent=5)
 pp = pp.pprint
@@ -57,25 +56,30 @@ try:
     #     print(room.name)
     #     print(room.furniture)
     # print(db.index.classes.get("Home").get(home.id).uses)
-    # furniture = db.query.get_all_where("Furniture", "name", "ne", "tv")
-    # if furniture:
-    #     for fur in furniture:
-    #         print(f"{fur.name} {fur.id}")
+    furniture = db.query.get_all_where("Furniture", [Filter("name", "ne", "tv")], 2)
+    if furniture:
+        for fur in furniture:
+            print(f"{fur.name} {fur.id}")
     # print(furniture[0].id)
-    # db.delete(home.id, "Home")
+    db.delete(home.id, "Home")
     # print(db.index.classes.get("Home").get(home.id).uses)
-    db.delete(home.main.furniture[0].id, "Furniture")
-    home2 = db.get(home.id, "Home")
-    print(home2.main.furniture)
+    # db.delete(home.main.furniture[0].id, "Furniture")
+    # home2 = db.get(home.id, "Home")
+    # print(home2.main.furniture)
+    # db.save(home2)
+    # home3 = db.get(home.id, "Home")
+    # print(home2)
+
     # print("\n")
-    # furniture = db.query.get_all_where("Furniture", "name", "ne", "tv")
+    # furniture = db.query.get_all_where("Furniture", [Filter("name", "eq", "tv")])
     # if furniture:
     #     for fur in furniture:
     #         print(f"{fur.name} {fur.id}")
 
-    # print(db.index.classes.get("Home").get(home.id).uses)
+    # # print(db.index.classes.get("Home").get(home.id).uses)
     # home = db.get(home.id, "Home")
-    # print(home.name)
+    # if home:
+    #     print(home.name)
 
     Database.save("test", db)
 

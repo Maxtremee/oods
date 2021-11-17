@@ -1,4 +1,4 @@
-from server.Persistent import Persistent
+from shared.Persistent import Persistent
 
 
 class Item:

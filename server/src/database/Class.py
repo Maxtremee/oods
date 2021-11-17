@@ -1,5 +1,5 @@
 from uuid import UUID
-from server.Item import Item
+from .Item import Item
 
 
 class Class:

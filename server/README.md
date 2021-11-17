@@ -1,4 +1,4 @@
-# oods
+# oods server
 
 Object Oriented Database System - project made for bachelor thesis of Computer Science degree at Wroclaw University of Science and Technology. It consists of two modules: server and client written entirely in Python. Main idea of project is to simplify data fetching by utilizing Python's *pickle* module, which serializes native Python objects. Therefore it's possible to *just* fetch the object without object realtional mapping. For instructions look below.
 

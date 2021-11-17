@@ -1,9 +1,8 @@
 import os
 import pickle
 import logging
-from server.Root import Root
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s: %(levelname)s: %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
+from .Root import Root
+from .query_resolver.QueryResolver import QueryResolver
 
 
 def _check_if_db_exists(name):
@@ -29,13 +28,17 @@ class Database:
                 f'Database \'{name}\' already exists. Skipping creation')
 
     def load(name: str) -> Root:
-        """Loads database with given name"""
-        root = None
+        """Loads database with given name
+        
+        Returns tuple of Root and QueryResolver"""
         if _check_if_db_exists(name):
             with open(f'{name}.db', 'rb') as file:
-                root = pickle.load(file)
+                try:
+                    root = pickle.load(file)
+                except Exception:
+                    logging.exception("Cannot load database")
             logging.info(f'Database \'{name}\' successfuly loaded')
-            return root
+            return root, QueryResolver(root)
         else:
             logging.error("No such database")
 
