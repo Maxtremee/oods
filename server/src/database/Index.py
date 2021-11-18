@@ -43,4 +43,6 @@ class Index:
 
     def get_all_by_cls(self, cls_name: str):
         """Returns all Items of a class"""
-        return self.classes.get(cls_name).items
+        cls = self.classes.get(cls_name)
+        if hasattr(cls, "items"):
+            return cls.items

@@ -2,6 +2,7 @@ import pickle
 import socket
 import threading
 import logging
+from time import sleep
 
 from shared.Request import Request
 from shared.Result import Result
@@ -15,7 +16,6 @@ class Server:
         self.root = root
         self.query_resolver = query_resolver
         self.active = True
-        self.threads = []
         self.mutex = mutex
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -29,29 +29,27 @@ class Server:
             client.settimeout(300)
             thread = threading.Thread(target = self.listenToClient, args = (client, address, self.root, self.query_resolver, self.mutex))
             thread.start()
-            self.threads.append(thread)
 
     def end(self):
         self.active = False
-        for thread in self.threads:
-            thread.join()
 
     def listenToClient(self, client, address, root, query_resolver, mutex):
         logging.debug(f'Started listening to client at {address}')
         size = 4096
         while self.active:
+            sleep(0.001)
             try:
                 data = client.recv(size)
                 if data:
                     res = Result()
                     try:
+                        mutex.acquire()
                         data = pickle.loads(data)
                         if isinstance(data, Request):
-                            mutex.acquire()
                             if data.query:
                                 query = data.query
                                 method = getattr(query_resolver, query.function_name)
-                                payload = method(query.arguments)
+                                payload = method(**query.arguments)
                                 res.set_data(payload)
                             elif data.persistent_obj:
                                 root.save(data.persistent_obj)
@@ -59,19 +57,22 @@ class Server:
                             elif data.root_obj:
                                 root.add_to_root(data.root_obj)
                                 logging.debug(f'Added new object to root {data.root_obj}')
-                            mutex.release()
                         else:
-                            logging.warn(f'Wrong request. Object type: {type(data).__name__}')
+                            message = f'Wrong request. Object type: {type(data).__name__}'
+                            logging.warn(message)
+                            res.set_status_err()
+                            res.set_message(message)
+                            res.set_data(None)
                     except Exception as e:
+                        logging.exception(e)
                         res.set_status_err()
                         res.set_message(str(e))
                         res.set_data(None)
-                        logging.exception(e)
                     finally:
+                        mutex.release()
                         res = pickle.dumps(res, pickle.HIGHEST_PROTOCOL)
                         client.send(res)
             except Exception as e:
                 logging.error(e)
-                client.close()
                 break
         client.close()

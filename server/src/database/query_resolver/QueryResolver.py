@@ -57,7 +57,7 @@ class QueryResolver:
             if items:
                 items = self._filter_items(items, filter.attr, filter.operator, filter.value)
             else:
-                return []
+                return None
         if limit:
             return items[0:limit]
         return items

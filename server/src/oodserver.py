@@ -3,12 +3,14 @@ import logging
 import signal
 import sys
 from threading import Lock
-from Server import Server
+from server.Server import Server
+from server.setInterval import setInterval
 from database.Database import Database
 from classes import *
 
 #parse arguments
-parser = argparse.ArgumentParser(description='OODS - Object Oriented Database System server', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(description='OODS - Object Oriented Database System server',
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 # Required positional argument
 parser.add_argument('db', type=str,
                     help='Database name')
@@ -20,16 +22,19 @@ parser.add_argument('--port', type=int,
 parser.add_argument('--clients', type=int,
                     help='Maximum clients number', default=5)
 parser.add_argument('--log-level', type=int,
-                    help='Logging level', default=20)
+                    help='Logging level', default=10)
+parser.add_argument('--interval', type=int,
+                    help='Autosave interval (in seconds)', default=60)
 args = parser.parse_args()
 
 # default arguments
 PORT = args.port
 ADDR = args.addr
 CLIENTS = args.clients
-# LOG_LEVEL = args.log_level
-LOG_LEVEL = 10
+LOG_LEVEL = args.log_level
 DB_NAME = args.db
+INTERVAL = args.interval
+print(LOG_LEVEL)
 
 # setup logging
 logging.basicConfig(level=LOG_LEVEL,
@@ -38,24 +43,31 @@ logging.basicConfig(level=LOG_LEVEL,
 # create shared mutex over root
 mutex = Lock()
 
+# create database saving function and run it in constant intervals
+
 
 def lock_and_save():
     mutex.acquire()
     try:
         Database.save(DB_NAME, root)
+        logging.debug('Saving database')
     except Exception as e:
         logging.exception(e)
     mutex.release()
 
 
+autosave = setInterval(INTERVAL, lock_and_save)
+
+
+# register SIGINT handler
 def signal_handler(sig, frame):
-    logging.info('Exiting...')
+    logging.info('Shutdown initiated')
+    autosave.cancel()
     server.end()
     lock_and_save()
     sys.exit(0)
 
 
-# register SIGINT handler
 signal.signal(signal.SIGINT, signal_handler)
 
 # start server
