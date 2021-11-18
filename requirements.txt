@@ -1,4 +1,0 @@
-autopep8==1.6.0
-magicattr==0.1.5
-pycodestyle==2.8.0
-toml==0.10.2
