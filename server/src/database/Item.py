@@ -1,4 +1,4 @@
-from shared.Persistent import Persistent
+from oodstools import Persistent
 
 
 class Item:

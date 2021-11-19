@@ -1,4 +1,4 @@
-from .Filter import Filter
+from .Filter import Filter, FilterBuilder
 from .Persistent import Persistent
 from .Query import Query
 from .Request import Request

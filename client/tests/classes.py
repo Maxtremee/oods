@@ -1,4 +1,4 @@
-from oodsclient import Persistent
+from oodstools import Persistent
 
 class Furniture(Persistent):
     def __init__(self, name):

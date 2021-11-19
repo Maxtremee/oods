@@ -1,4 +1,4 @@
-from shared.Persistent import Persistent
+from oodstools import Persistent
 from .Index import Index
 from .Item import Item
 from .Reference import Reference

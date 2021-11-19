@@ -4,8 +4,8 @@ import threading
 import logging
 from time import sleep
 
-from shared.Request import Request
-from shared.Result import Result
+from oodstools import Request
+from oodstools import Result
 from classes import *
 
 class Server:
