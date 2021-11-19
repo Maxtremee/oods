@@ -1,7 +1,7 @@
 class Result:
     def __init__(self) -> None:
         self.status = 'ok'
-        self.message = None
+        self.message = ''
         self.data = None
 
     def set_data(self, data):

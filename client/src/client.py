@@ -1,80 +1,117 @@
-import argparse
-import socket 
+import socket
 import pickle
+import logging
 from uuid import UUID
-from classes import *
-from shared.Filter import Filter
-from shared.Query import Query
-from shared.Request import Request
 
-sock = socket.socket()        
- 
-# Define the port on which you want to connect
-parser = argparse.ArgumentParser(description='OODS')
-parser.add_argument('--addr', type=str,
-                    help='Address to bind server to (default: localhost)')
-parser.add_argument('--port', type=int,
-                    help='Port number (default: 5000)')
-args = parser.parse_args()
+from oodstools import Persistent
+from .Query import Query
+from .Filter import Filter
+from .Request import Request
+from .Result import Result
 
-PORT = args.port or 5050
-ADDR = args.addr or'localhost'
 
-rooms = [Room('kitchen', 'cooker', 'drawers', 'knife'), Room(
-            'living room', 'couch', 'tv', 'painting'), Room('bathroom', 'sink', 'bath', 'shower')]
-home = Home('house', rooms)
-test_id = UUID("12345678123456781234567812345678")
-home.id = test_id
- 
-# connect to the server
-sock.connect((ADDR, PORT))
+class Client:
+    buffer = 4096
 
-# send new home object
-req = Request()
-req.add_to_root(home)
-# home.name = 'test'
-# query.add_to_save(home)
-req = pickle.dumps(req, pickle.HIGHEST_PROTOCOL)
-sock.send(req)
-data = sock.recv(4096)
-data = pickle.loads(data)
-print(f'Status: {data.status}')
-print(f'Message: {data.message}')
-print('Data:')
-print(data.data)
-print()
+    def __init__(self, address, port) -> None:
+        self.socket = socket.socket()
+        self.address = (address, port)
+        self._connect()
 
-# query all Home objects
-req = Request()
-function_name = "get_all"
-arguments = {"cls_name": "Home"}
-query = Query(function_name, arguments)
-req.add_query(query)
-req = pickle.dumps(req, pickle.HIGHEST_PROTOCOL)
-sock.send(req)
-data = sock.recv(4096)
-data = pickle.loads(data)
-print(f'Status: {data.status}')
-print(f'Message: {data.message}')
-print('Data:')
-print(data.data)
-print()
+    def _connect(self):
+        self.socket.connect(self.address)
 
-# query specific furniture
-req = Request()
-function_name = "get_all_where"
-arguments = {"cls_name": "Furniture", "filters" :[Filter("name", "ne", "tv")], "limit" : 2}
-query = Query(function_name, arguments)
-req.add_query(query)
-req = pickle.dumps(req, pickle.HIGHEST_PROTOCOL)
-sock.send(req)
-data = sock.recv(4096)
-data = pickle.loads(data)
-print(f'Status: {data.status}')
-print(f'Message: {data.message}')
-print('Data:')
-print(data.data)
-print()
+    def disconnect(self):
+        self.socket.close()
 
-# close the connection
-sock.close()
+    def _send_request(self, req) -> Result:
+        try:
+            req = pickle.dumps(req)
+            self.socket.sendall(req)
+            res = self.socket.recv(self.buffer)
+            res = pickle.loads(res)
+            return res
+        except Exception as e:
+            logging.exception(e)
+            return None
+
+    def _send_query(self, function_name, arguments):
+        req = Request()
+        query = Query(function_name, arguments)
+        req.add_query(query)
+        return self._send_request(req)
+
+    def save(self, obj: Persistent):
+        req = Request()
+        req.add_to_save(obj)
+        return self._send_request(req)
+
+    def add_to_root(self, obj: Persistent):
+        req = Request()
+        req.add_to_root(obj)
+        return self._send_request(req)
+
+    def get_by_id(self, id: UUID):
+        function_name = "get_by_id"
+        arguments = {id: id}
+        return self._send_query(function_name, arguments)
+
+    def get_by_id(self, id: UUID, cls_name: str):
+        function_name = "get_by_id_and_cls"
+        arguments = {"id": id, "cls_name": cls_name}
+        return self._send_query(function_name, arguments)
+
+    def get_all(self, cls_name: str):
+        function_name = "get_all"
+        arguments = {"cls_name": cls_name}
+        return self._send_query(function_name, arguments)
+
+    def get_all_where(self, cls_name: str, filters: list, limit: int = None):
+        function_name = "get_all_where"
+        arguments = {"cls_name": cls_name,
+                     "filters": filters, "limit": limit}
+        return self._send_query(function_name, arguments)
+
+
+class FilterBuilder:
+    def __init__(self) -> None:
+        self.argument = ''
+        self.operator = 'eq'
+        self.value = None
+
+    def where(self, argument):
+        self.argument = argument
+        return self
+
+    def eq(self, value):
+        self.operator = 'eq'
+        self.value = value
+        return self
+
+    def ne(self, value):
+        self.operator = 'ne'
+        self.value = value
+        return self
+
+    def lt(self, value):
+        self.operator = 'lt'
+        self.value = value
+        return self
+
+    def gt(self, value):
+        self.operator = 'gt'
+        self.value = value
+        return self
+
+    def le(self, value):
+        self.operator = 'le'
+        self.value = value
+        return self
+
+    def ge(self, value):
+        self.operator = 'ge'
+        self.value = value
+        return self
+
+    def build(self):
+        return Filter(self.argument, self.operator, self.value)
