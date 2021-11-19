@@ -1,4 +1,11 @@
 class Result:
+    '''Class being returned on query to database.
+    
+    Attributes:
+        status
+        message
+        data
+    '''
     def __init__(self) -> None:
         self.status = 'ok'
         self.message = ''

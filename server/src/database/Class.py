@@ -15,9 +15,6 @@ class Class:
                 old.set(new.obj)
                 old.increment()
                 self.items.update({id: old})
-            else:
-                #TODO: raise error
-                pass
         else:
             self.items.update({id: new})
 

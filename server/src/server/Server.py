@@ -26,7 +26,6 @@ class Server:
         logging.info(f'Server is listening on {(self.host, self.port)}')
         while True:
             client, address = self.sock.accept()
-            client.settimeout(300)
             thread = threading.Thread(target = self.listenToClient, args = (client, address, self.root, self.query_resolver, self.mutex))
             thread.start()
 

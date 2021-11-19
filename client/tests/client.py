@@ -1,7 +1,9 @@
 import argparse
 from uuid import UUID
+from time import sleep
 
-from oodsclient import Client, FilterBuilder
+from oodsclient import Client
+from oodstools import FilterBuilder
 from classes import *
 
 # Define the port on which you want to connect
@@ -50,6 +52,8 @@ print(f'Message: {data.message}')
 print('Data:')
 print(data.data)
 print()
+
+sleep (6)
 
 # query specific furniture
 filterBuilder = FilterBuilder()

@@ -34,7 +34,6 @@ CLIENTS = args.clients
 LOG_LEVEL = args.log_level
 DB_NAME = args.db
 INTERVAL = args.interval
-print(LOG_LEVEL)
 
 # setup logging
 logging.basicConfig(level=LOG_LEVEL,
