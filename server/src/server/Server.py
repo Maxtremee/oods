@@ -56,6 +56,8 @@ class Server:
                             elif data.root_obj:
                                 root.add_to_root(data.root_obj)
                                 logging.debug(f'Added new object to root {data.root_obj}')
+                            elif data.delete_id:
+                                root.delete(data.delete_id, data.delete_recursive)
                         else:
                             message = f'Wrong request. Object type: {type(data).__name__}'
                             logging.warn(message)

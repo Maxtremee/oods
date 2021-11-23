@@ -130,7 +130,12 @@ class Root:
                                 self._delete(attr_obj_item)
             return self.index.remove(ref)
 
-    def delete(self, id: UUID, cls_name: str = None):
-        """Deletes specified object and any Persistent object it might contain"""
+    def delete(self, id: UUID, cls_name: str = None, recursive: bool = False):
+        """Deletes specified object
+        If recursive set to True will also delete any other Persistent object it or 
+        its attributes might contain"""
         ref = Reference(id, cls_name)
-        self._delete(ref)
+        if recursive:
+            self._delete(ref)
+        else:
+            self.index.remove(ref)

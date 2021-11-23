@@ -82,3 +82,11 @@ class Client:
         arguments = {"cls_name": cls_name,
                      "filters": filters, "limit": limit}
         return self._send_query(function_name, arguments)
+
+    def delete(self, id: UUID, recursive: bool = False):
+        '''Delete object in database by ID.
+        
+        Set "recursive" to True if nested Persistent objects should also be deleted'''
+        req = Request()
+        req.delete(id, recursive)
+        return self._send_request(req)
