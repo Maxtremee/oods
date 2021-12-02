@@ -2,11 +2,14 @@ import pickle
 import socket
 import threading
 import logging
+import select
 from time import sleep
 
 from oodstools import Request
 from oodstools import Result
 from classes import *
+
+PACKET_SIZE = 1024100
 
 class Server:
     def __init__(self, host, port, max_clients, root, query_resolver, mutex):
@@ -28,21 +31,32 @@ class Server:
             client, address = self.sock.accept()
             thread = threading.Thread(target = self.listenToClient, args = (client, address, self.root, self.query_resolver, self.mutex))
             thread.start()
-
+                    
+            
     def end(self):
         self.active = False
 
     def listenToClient(self, client, address, root, query_resolver, mutex):
         logging.debug(f'Started listening to client at {address}')
-        size = 4096
         while self.active:
             sleep(0.001)
             try:
-                data = client.recv(size)
+                data = client.recv(PACKET_SIZE)
+                # data = []
+                # while True:
+                #     packet = client.recv(PACKET_SIZE)
+                #     if not packet:
+                #         print('not packet')
+                #         break
+                #     data.append(packet)
+                #     print('appending')
+                # data = b"".join(data)
+                # print('finished receiving')
                 if data:
                     res = Result()
                     try:
                         mutex.acquire()
+                        
                         data = pickle.loads(data)
                         if isinstance(data, Request):
                             if data.query:
