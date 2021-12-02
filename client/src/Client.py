@@ -61,7 +61,7 @@ class Client:
     def get_by_id(self, id: UUID):
         '''Get object by ID'''
         function_name = "get_by_id"
-        arguments = {id: id}
+        arguments = {"id": id}
         return self._send_query(function_name, arguments)
 
     def get_by_id_and_cls(self, id: UUID, cls_name: str):

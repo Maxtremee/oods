@@ -19,25 +19,24 @@ class Request:
         
         Resets other fields'''
         self.query = query
-        self.reset('query')
+        self._reset('query')
     
     def add_to_save(self, persistent_obj):
         '''Add Persistent object to be saved in database
         
         Resets other fields'''
         self.persistent_obj = persistent_obj
-        self.reset('persistent_obj')
+        self._reset('persistent_obj')
 
     def add_to_root(self, root_obj):
         '''Add Persistent object that will be the root object
         
         Resets other fields'''
         self.root_obj = root_obj
-        self.reset('root_obj')
-
+        self._reset('root_obj')
 
     def delete(self, id, recursive = False):
         self.delete_id = id
         self.delete_recursive = recursive
-        self.reset('delete_id')
+        self._reset('delete_id')
 
