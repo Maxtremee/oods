@@ -2,7 +2,6 @@ import pickle
 import socket
 import threading
 import logging
-import select
 from time import sleep
 
 from oodstools import Request
@@ -42,16 +41,6 @@ class Server:
             sleep(0.001)
             try:
                 data = client.recv(PACKET_SIZE)
-                # data = []
-                # while True:
-                #     packet = client.recv(PACKET_SIZE)
-                #     if not packet:
-                #         print('not packet')
-                #         break
-                #     data.append(packet)
-                #     print('appending')
-                # data = b"".join(data)
-                # print('finished receiving')
                 if data:
                     res = Result()
                     try:
