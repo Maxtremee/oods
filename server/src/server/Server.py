@@ -28,14 +28,13 @@ class Server:
         logging.info(f'Server is listening on {(self.host, self.port)}')
         while True:
             client, address = self.sock.accept()
-            thread = threading.Thread(target = self.listenToClient, args = (client, address, self.root, self.query_resolver, self.mutex))
+            thread = threading.Thread(target = self.listen_to_client, args = (client, address, self.root, self.query_resolver, self.mutex))
             thread.start()
                     
-            
     def end(self):
         self.active = False
 
-    def listenToClient(self, client, address, root, query_resolver, mutex):
+    def listen_to_client(self, client, address, root, query_resolver, mutex):
         logging.debug(f'Started listening to client at {address}')
         while self.active:
             sleep(0.001)
